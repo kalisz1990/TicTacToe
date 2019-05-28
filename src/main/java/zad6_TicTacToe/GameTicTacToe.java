@@ -2,291 +2,165 @@ package zad6_TicTacToe;
 
 import java.util.Scanner;
 
-class GameTicTacToe {
+class GameTicTacToe extends Board {
 
-    private char player1Mark;
-    private char player2Mark;
-    private char winner;
+    private char currentPlayer;
     private boolean win = false;
-    private char[][] gameBoard = {
-            {'1', '2', '3'},
-            {'4', '5', '6'},
-            {'7', '8', '9'}
-    };
 
     private Scanner scanner = new Scanner(System.in);
 
     void play() {
         chooseYourMark();
         do {
-            player1Move();
-            if (isWin()) {
-                this.winner = this.player1Mark;
-                break;
-            }
-            player2Move();
-            if (isWin()) {
-                this.winner = this.player2Mark;
-                break;
-            }
+            printBoard();
+            readMove();
+        } while (!isWin());
+        printBoard();
+        System.out.println("game over, the winner is: " + currentPlayer);
+    }
 
-        } while (!this.win);
-        createBoard();
-        System.out.println("game over, the winner is: " + this.winner);
+    private void readMove() {
+        int index;
+
+        System.out.println("Player " + currentPlayer + " move");
+        index = scanner.nextInt();
+        if (isPlaceTaken(index)) {
+            System.out.println("Place taken, choose again");
+            printBoard();
+            readMove();
+        } else {
+            choosePlaceOnBoard(index);
+            if (currentPlayer == 'o') {
+                hasWon(currentPlayer);
+                if (isWin()) {
+                    return;
+                }
+                currentPlayer = 'x';
+            } else {
+                hasWon(currentPlayer);
+                if (isWin()) {
+                    return;
+                }
+                currentPlayer = 'o';
+            }
+        }
+    }
+
+    private boolean checkHorizontakLine(int line) {
+        int count = 0;
+        for (int i = 0; i < getGameBoard().length; i++) {
+            if (getGameBoard()[line][i] == currentPlayer) {
+                count++;
+            }
+        }
+        return count == 3;
+    }
+
+    private boolean checkVerticalkLine(int line) {
+        int count = 0;
+        for (int i = 0; i < getGameBoard().length; i++) {
+            if (getGameBoard()[i][line] == currentPlayer) {
+                count++;
+            }
+        }
+        return count == 3;
+    }
+
+    private boolean checkCrossLine1() {
+        int count = 0;
+        for (int i = 0; i < getGameBoard().length; i++) {
+            if (getGameBoard()[i][i] == currentPlayer) {
+                count++;
+            }
+        }
+        return count == 3;
+    }
+
+    private boolean checkCrossLine2() {
+        int count = 0;
+        for (int i = 2, j = 0; i >= 0 && j < getGameBoard().length; i--, j++) {
+            if (getGameBoard()[i][j] == currentPlayer) {
+                count++;
+            }
+        }
+        return count == 3;
+    }
+
+    private void hasWon(char currentPlayer) {
+
+        win = win || checkHorizontakLine(0);
+        win = win || checkHorizontakLine(1);
+        win = win || checkHorizontakLine(2);
+        win = win || checkVerticalkLine(0);
+        win = win || checkVerticalkLine(1);
+        win = win || checkVerticalkLine(2);
+        win = win || checkCrossLine1();
+        win = win || checkCrossLine2();
+    }
+
+    private void chooseYourMark() {
+        String playerChoice;
+
+        System.out.println("Choose your mark: 'x' , 'o'");
+        playerChoice = scanner.next();
+        if (playerChoice.equals("x") || playerChoice.equals("o")) {
+            this.currentPlayer = playerChoice.charAt(0);
+        } else {
+            System.out.println("wrong mark, choose again.");
+            chooseYourMark();
+        }
     }
 
     private boolean isWin() {
         return win;
     }
 
-    private void createBoard() {
-        System.out.print(" _ _  _ _  _ _\n");
-        for (char[] aGameBoard : this.gameBoard) {
-            for (char anAGameBoard : aGameBoard) {
-                System.out.print("|_" + anAGameBoard + "_|");
-            }
-            System.out.println();
-        }
-    }
+    private void choosePlaceOnBoard(int index) {
+        char[][] tempChar = getGameBoard();
 
-    private void chooseYourMark() {
-        String playerChoice;
-        do {
-            System.out.println("Choose your mark: 'x' , 'o'");
-            playerChoice = scanner.next();
-            if (playerChoice.equals("x") || playerChoice.equals("o")) {
-                this.player1Mark = playerChoice.charAt(0);
-            } else {
-                System.out.println("wrong mark, choose again.");
-            }
-        } while (!playerChoice.equals("x") && !playerChoice.equals("o"));
+        if (getBoardPlace(index) == 'x' || getBoardPlace(index) == 'o') {
+            System.out.println("this place is taken");
 
-        if (this.player1Mark == 'x') {
-            this.player2Mark = 'o';
         } else {
-            this.player2Mark = 'x';
-        }
-    }
-
-    private void conditionOfWinPlayer1() {
-        if ((gameBoard[0][0] == player1Mark && gameBoard[0][1] == player1Mark) && gameBoard[0][2] == player1Mark) {
-            this.win = true;
-        }
-        if ((gameBoard[1][0] == player1Mark && gameBoard[1][1] == player1Mark) && gameBoard[1][2] == player1Mark) {
-            this.win = true;
-        }
-        if ((gameBoard[2][0] == player1Mark && gameBoard[2][1] == player1Mark) && gameBoard[2][2] == player1Mark) {
-            this.win = true;
-        }
-        if ((gameBoard[0][0] == player1Mark && gameBoard[1][0] == player1Mark) && gameBoard[2][0] == player1Mark) {
-            this.win = true;
-        }
-        if ((gameBoard[0][1] == player1Mark && gameBoard[1][1] == player1Mark) && gameBoard[2][1] == player1Mark) {
-            this.win = true;
-        }
-        if ((gameBoard[0][2] == player1Mark && gameBoard[1][2] == player1Mark) && gameBoard[2][2] == player1Mark) {
-            this.win = true;
-        }
-        if ((gameBoard[0][0] == player1Mark && gameBoard[1][1] == player1Mark) && gameBoard[2][2] == player1Mark) {
-            this.win = true;
-        }
-        if ((gameBoard[2][2] == player1Mark && gameBoard[1][1] == player1Mark) && gameBoard[0][2] == player1Mark) {
-            this.win = true;
-        }
-    }
-
-    private void conditionOfWinPlayer2() {
-        if ((gameBoard[0][0] == player2Mark && gameBoard[0][1] == player2Mark) && gameBoard[0][2] == player2Mark) {
-            this.win = true;
-        }
-        if ((gameBoard[1][0] == player2Mark && gameBoard[1][1] == player2Mark) && gameBoard[1][2] == player2Mark) {
-            this.win = true;
-        }
-        if ((gameBoard[2][0] == player2Mark && gameBoard[2][1] == player2Mark) && gameBoard[2][2] == player2Mark) {
-            this.win = true;
-        }
-        if ((gameBoard[0][0] == player2Mark && gameBoard[1][0] == player2Mark) && gameBoard[2][0] == player2Mark) {
-            this.win = true;
-        }
-        if ((gameBoard[0][1] == player2Mark && gameBoard[1][1] == player2Mark) && gameBoard[2][1] == player2Mark) {
-            this.win = true;
-        }
-        if ((gameBoard[0][2] == player2Mark && gameBoard[1][2] == player2Mark) && gameBoard[2][2] == player2Mark) {
-            this.win = true;
-        }
-        if ((gameBoard[0][0] == player2Mark && gameBoard[1][1] == player2Mark) && gameBoard[2][2] == player2Mark) {
-            this.win = true;
-        }
-        if ((gameBoard[2][2] == player2Mark && gameBoard[1][1] == player2Mark) && gameBoard[0][2] == player2Mark) {
-            this.win = true;
-        }
-    }
-
-    private void player1Move() {
-        createBoard();
-        System.out.println("Player " + player1Mark + " move");
-        choosePlaceOnBoardPlayer1(scanner.nextInt());
-        conditionOfWinPlayer1();
-    }
-
-    private void player2Move() {
-        createBoard();
-        System.out.println("Player " + player2Mark + " move");
-        choosePlaceOnBoardPlayer2(scanner.nextInt());
-        conditionOfWinPlayer2();
-    }
-
-    private void choosePlaceOnBoardPlayer1(int placeOnBoard) {
-        switch (placeOnBoard) {
-            case 1:
-                if ((this.gameBoard[0][0] != this.player2Mark) && (this.gameBoard[0][0] != this.player1Mark)) {
-                    this.gameBoard[0][0] = this.player1Mark;
-                } else {
-                    System.out.println("this place is taken");
-                    player1Move();
-                }
-                break;
-            case 2:
-                if ((this.gameBoard[0][1] != this.player2Mark) && (this.gameBoard[0][1] != this.player1Mark)) {
-                    this.gameBoard[0][1] = this.player1Mark;
-                } else {
-                    System.out.println("this place is taken");
-                    player1Move();
-                }
-                break;
-            case 3:
-                if ((this.gameBoard[0][2] != this.player2Mark) && (this.gameBoard[0][2] != this.player1Mark)) {
-                    this.gameBoard[0][2] = this.player1Mark;
-                } else {
-                    System.out.println("this place is taken");
-                    player1Move();
-                }
-                break;
-            case 4:
-                if ((this.gameBoard[1][0] != this.player2Mark) && (this.gameBoard[1][0] != this.player1Mark)) {
-                    this.gameBoard[1][0] = this.player1Mark;
-                } else {
-                    System.out.println("this place is taken");
-                    player1Move();
-                }
-                break;
-            case 5:
-                if ((this.gameBoard[1][1] != this.player2Mark) && (this.gameBoard[1][1] != this.player1Mark)) {
-                    this.gameBoard[1][1] = this.player1Mark;
-                } else {
-                    System.out.println("this place is taken");
-                    player1Move();
-                }
-                break;
-            case 6:
-                if ((this.gameBoard[1][2] != this.player2Mark) && (this.gameBoard[1][2] != this.player1Mark)) {
-                    this.gameBoard[1][2] = this.player1Mark;
-                } else {
-                    System.out.println("this place is taken");
-                    player1Move();
+            switch (index) {
+                case 1:
+                    tempChar[0][0] = currentPlayer;
+                    setGameBoard(tempChar);
                     break;
-                }
-            case 7:
-                if ((this.gameBoard[2][0] != this.player2Mark) && (this.gameBoard[2][0] != this.player1Mark)) {
-                    this.gameBoard[2][0] = this.player1Mark;
-                } else {
-                    System.out.println("this place is taken");
-                    player1Move();
-                }
-                break;
-            case 8:
-                if ((this.gameBoard[2][1] != this.player2Mark) && (this.gameBoard[2][1] != this.player1Mark)) {
-                    this.gameBoard[2][1] = this.player1Mark;
-                } else {
-                    System.out.println("this place is taken");
-                    player1Move();
-                }
-                break;
-            case 9:
-                if ((this.gameBoard[2][2] != this.player2Mark) && (this.gameBoard[2][2] != this.player1Mark)) {
-                    this.gameBoard[2][2] = this.player1Mark;
-                } else {
-                    System.out.println("this place is taken");
-                    player1Move();
-                }
-                break;
-        }
-    }
-
-    private void choosePlaceOnBoardPlayer2(int placeOnBoard) {
-        switch (placeOnBoard) {
-            case 1:
-                if ((this.gameBoard[0][0] != this.player1Mark) && (this.gameBoard[0][0] != this.player2Mark)) {
-                    this.gameBoard[0][0] = this.player2Mark;
-                } else {
-                    System.out.println("this place is taken");
-                    player2Move();
-                }
-                break;
-            case 2:
-                if ((this.gameBoard[0][1] != this.player1Mark) && (this.gameBoard[0][1] != this.player2Mark)) {
-                    this.gameBoard[0][1] = this.player2Mark;
-                } else {
-                    System.out.println("this place is taken");
-                    player2Move();
-                }
-                break;
-            case 3:
-                if ((this.gameBoard[0][2] != this.player1Mark) && (this.gameBoard[0][2] != this.player2Mark)) {
-                    this.gameBoard[0][2] = this.player2Mark;
-                } else {
-                    System.out.println("this place is taken");
-                    player2Move();
-                }
-                break;
-            case 4:
-                if ((this.gameBoard[1][0] != this.player1Mark) && (this.gameBoard[1][0] != this.player2Mark)) {
-                    this.gameBoard[1][0] = this.player2Mark;
-                } else {
-                    System.out.println("this place is taken");
-                    player2Move();
-                }
-                break;
-            case 5:
-                if ((this.gameBoard[1][1] != this.player1Mark) && (this.gameBoard[1][1] != this.player2Mark)) {
-                    this.gameBoard[1][1] = this.player2Mark;
-                } else {
-                    System.out.println("this place is taken");
-                    player2Move();
-                }
-                break;
-            case 6:
-                if ((this.gameBoard[1][2] != this.player1Mark) && (this.gameBoard[1][2] != this.player2Mark)) {
-                    this.gameBoard[1][2] = this.player2Mark;
-                } else {
-                    System.out.println("this place is taken");
-                    player2Move();
-                }
-                break;
-            case 7:
-                if ((this.gameBoard[2][0] != this.player1Mark) && (this.gameBoard[2][0] != this.player2Mark)) {
-                    this.gameBoard[2][0] = this.player2Mark;
-                } else {
-                    System.out.println("this place is taken");
-                    player2Move();
-                }
-                break;
-            case 8:
-                if ((this.gameBoard[2][1] != this.player1Mark) && (this.gameBoard[2][1] != this.player2Mark)) {
-                    this.gameBoard[2][1] = this.player2Mark;
-                } else {
-                    System.out.println("this place is taken");
-                    player2Move();
-                }
-                break;
-            case 9:
-                if ((this.gameBoard[2][2] != this.player1Mark) && (this.gameBoard[2][2] != this.player2Mark)) {
-                    this.gameBoard[2][2] = this.player2Mark;
-                } else {
-                    System.out.println("this place is taken by other player");
-                    player2Move();
-                }
-                break;
+                case 2:
+                    tempChar[0][1] = currentPlayer;
+                    setGameBoard(tempChar);
+                    break;
+                case 3:
+                    tempChar[0][2] = currentPlayer;
+                    setGameBoard(tempChar);
+                    break;
+                case 4:
+                    tempChar[1][0] = currentPlayer;
+                    setGameBoard(tempChar);
+                    break;
+                case 5:
+                    tempChar[1][1] = currentPlayer;
+                    setGameBoard(tempChar);
+                    break;
+                case 6:
+                    tempChar[1][2] = currentPlayer;
+                    setGameBoard(tempChar);
+                    break;
+                case 7:
+                    tempChar[2][0] = currentPlayer;
+                    setGameBoard(tempChar);
+                    break;
+                case 8:
+                    tempChar[2][1] = currentPlayer;
+                    setGameBoard(tempChar);
+                    break;
+                case 9:
+                    tempChar[2][2] = currentPlayer;
+                    setGameBoard(tempChar);
+                    break;
+            }
         }
     }
 }
+

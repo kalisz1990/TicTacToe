@@ -1,4 +1,5 @@
 package zad6_TicTacToe;
+
 /*
 Zadanie 6. Zaimplementuj grę w kółko i krzyżyk na planszy 3x3 użyj
 tablic dwuwymiarowych. Pozwól użytkownikowi wybrać czy gra
@@ -11,7 +12,7 @@ public class Player {
     public static void main(String[] args) {
 
         GameTicTacToe ticTacToe = new GameTicTacToe();
-
         ticTacToe.play();
+
     }
 }
