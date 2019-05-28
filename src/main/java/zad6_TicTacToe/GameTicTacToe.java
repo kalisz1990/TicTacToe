@@ -10,6 +10,8 @@ class GameTicTacToe extends Board {
     private Scanner scanner = new Scanner(System.in);
 
     void play() {
+        Bot bot = new Bot();
+
         chooseYourMark();
         do {
             printBoard();
@@ -24,12 +26,10 @@ class GameTicTacToe extends Board {
 
         System.out.println("Player " + currentPlayer + " move");
         index = scanner.nextInt();
-        if (isPlaceTaken(index)) {
-            System.out.println("Place taken, choose again");
+        if (!choosePlaceOnBoard(index)) {
             printBoard();
             readMove();
         } else {
-            choosePlaceOnBoard(index);
             if (currentPlayer == 'o') {
                 hasWon(currentPlayer);
                 if (isWin()) {
@@ -115,52 +115,53 @@ class GameTicTacToe extends Board {
         return win;
     }
 
-    private void choosePlaceOnBoard(int index) {
+    boolean choosePlaceOnBoard(int index) {
         char[][] tempChar = getGameBoard();
 
         if (getBoardPlace(index) == 'x' || getBoardPlace(index) == 'o') {
             System.out.println("this place is taken");
-
+            return false;
         } else {
             switch (index) {
                 case 1:
                     tempChar[0][0] = currentPlayer;
                     setGameBoard(tempChar);
-                    break;
+                    return true;
                 case 2:
                     tempChar[0][1] = currentPlayer;
                     setGameBoard(tempChar);
-                    break;
+                    return true;
                 case 3:
                     tempChar[0][2] = currentPlayer;
                     setGameBoard(tempChar);
-                    break;
+                    return true;
                 case 4:
                     tempChar[1][0] = currentPlayer;
                     setGameBoard(tempChar);
-                    break;
+                    return true;
                 case 5:
                     tempChar[1][1] = currentPlayer;
                     setGameBoard(tempChar);
-                    break;
+                    return true;
                 case 6:
                     tempChar[1][2] = currentPlayer;
                     setGameBoard(tempChar);
-                    break;
+                    return true;
                 case 7:
                     tempChar[2][0] = currentPlayer;
                     setGameBoard(tempChar);
-                    break;
+                    return true;
                 case 8:
                     tempChar[2][1] = currentPlayer;
                     setGameBoard(tempChar);
-                    break;
+                    return true;
                 case 9:
                     tempChar[2][2] = currentPlayer;
                     setGameBoard(tempChar);
-                    break;
+                    return true;
             }
         }
+        return true;
     }
 }
 

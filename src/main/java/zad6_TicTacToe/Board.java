@@ -16,10 +16,6 @@ class Board {
         return gameBoard;
     }
 
-    boolean isPlaceTaken(int index) {
-        return getBoardPlace(index) == 'x' || getBoardPlace(index) == 'o';
-    }
-
     char getBoardPlace(int index) {
         int a = 0;
         int b = 0;
